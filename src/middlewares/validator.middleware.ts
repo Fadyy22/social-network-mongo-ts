@@ -6,7 +6,7 @@ export const globalValidatorMiddleware: RequestHandler = (req, res, next) => {
   if (!errors.isEmpty()) {
     return res
       .status(400)
-      .json({ error: errors.array(), message: 'Validation Failed' });
+      .json({ errors: errors.array(), message: 'Validation Failed' });
   }
   next();
 };

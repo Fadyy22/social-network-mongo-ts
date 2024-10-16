@@ -1,9 +1,9 @@
 import cors from 'cors';
 import dotenv from 'dotenv';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 
-import ApiError from './exceptions/HttpException';
 import mountRoutes from './utils/mountRoutes';
+import globalError from './middlewares/error.middleware';
 import { NotFoundException } from './exceptions';
 
 dotenv.config();
@@ -19,15 +19,7 @@ app.use('*', (req, _res, next) => {
   next(new NotFoundException(`Can't find ${req.originalUrl} on this server`));
 });
 
-app.use(
-  (error: ApiError, _req: Request, res: Response, _next: NextFunction) => {
-    const statusCode = error.statusCode || 500;
-
-    res.status(statusCode).json({
-      error: error.message,
-    });
-  }
-);
+app.use(globalError);
 
 app.listen(Number(process.env.PORT), process.env.HOST as string, () => {
   console.log(
