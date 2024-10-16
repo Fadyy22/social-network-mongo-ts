@@ -1,4 +1,4 @@
-export default class ApiError extends Error {
+export default class HttpException extends Error {
   statusCode: number;
 
   constructor(message: string, statusCode: number) {

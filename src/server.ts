@@ -2,8 +2,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import express, { Request, Response, NextFunction } from 'express';
 
-import ApiError from './utils/apiError';
-import mountRoutes from './routes/index';
+import ApiError from './exceptions/HttpException';
+import mountRoutes from './utils/mountRoutes';
+import { NotFoundException } from './exceptions';
 
 dotenv.config();
 
@@ -14,17 +15,16 @@ app.use(express.json());
 
 mountRoutes(app);
 
-app.use('*', (req, res) => {
-  return res.status(404).json({
-    message: `Route ${req.originalUrl} not found`,
-  });
+app.use('*', (req, _res, next) => {
+  next(new NotFoundException(`Can't find ${req.originalUrl} on this server`));
 });
 
 app.use(
   (error: ApiError, _req: Request, res: Response, _next: NextFunction) => {
-    error.statusCode = error.statusCode || 500;
-    return res.status(error.statusCode).json({
-      message: error.message,
+    const statusCode = error.statusCode || 500;
+
+    res.status(statusCode).json({
+      error: error.message,
     });
   }
 );

@@ -4,7 +4,7 @@ import { PrismaClient } from '@prisma/client';
 import {
   customValidatorMiddleware,
   globalValidatorMiddleware,
-} from '../../middlewares/validatorMiddleware';
+} from '../middlewares/validator.middleware';
 
 const prisma = new PrismaClient();
 

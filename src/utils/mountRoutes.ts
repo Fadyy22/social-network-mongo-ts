@@ -1,8 +1,8 @@
 import { Express } from 'express';
 
-import authRouter from './authRoute';
-import postRouter from './postRoute';
-import userRouter from './userRoute';
+import authRouter from '../auth/auth.route';
+import postRouter from '../posts/posts.route';
+import userRouter from '../users/users.route';
 
 const mountRoutes = (app: Express) => {
   app.use('/auth', authRouter);

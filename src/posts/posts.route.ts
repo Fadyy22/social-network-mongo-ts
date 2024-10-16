@@ -6,18 +6,18 @@ import {
   getPost,
   updatePost,
   deletePost,
-} from '../controllers/postController';
+} from './posts.service';
 
 import {
   createPostValidator,
   updatePostValidator,
   deletePostValidator,
-} from '../utils/validators/postValidator';
+} from './posts.validator';
 
-import commentRouter from './commentRoute';
-import likeRouter from './likeRoute';
+import commentRouter from '../comments/comments.route';
+import likeRouter from '../likes/likes.route';
 
-import isAuth from '../middlewares/authMiddleware';
+import isAuth from '../middlewares/auth.middleware';
 
 const router = Router();
 

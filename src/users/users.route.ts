@@ -6,14 +6,14 @@ import {
   getUserProfile,
   addFriend,
   acceptFriendRequest,
-} from '../controllers/userController';
+} from './users.service';
 
 import {
   addFriendValidator,
   acceptFriendRequestValidator,
-} from '../utils/validators/userValidator';
+} from './users.validator';
 
-import isAuth from '../middlewares/authMiddleware';
+import isAuth from '../middlewares/auth.middleware';
 
 const router = Router();
 

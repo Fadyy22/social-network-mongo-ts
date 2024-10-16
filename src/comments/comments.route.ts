@@ -1,13 +1,13 @@
 import { Router } from 'express';
 
-import { createComment, deleteComment } from '../controllers/commentController';
+import { createComment, deleteComment } from './comments.service';
 
 import {
   createCommentValidator,
   deleteCommentValidator,
-} from '../utils/validators/commentValidator';
+} from './comments.validator';
 
-import isAuth from '../middlewares/authMiddleware';
+import isAuth from '../middlewares/auth.middleware';
 
 const router = Router({ mergeParams: true });
 
