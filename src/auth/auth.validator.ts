@@ -1,4 +1,4 @@
-import { compare, hashSync } from 'bcrypt';
+import { compare, hashSync } from 'bcryptjs';
 import { check, checkExact } from 'express-validator';
 import { PrismaClient } from '@prisma/client';
 

@@ -1,7 +1,6 @@
 import asyncHandler from 'express-async-handler';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
 export const createPost = asyncHandler(async (req, res) => {
   req.body.authorId = req.user!.id;

@@ -3,9 +3,8 @@ import fs from 'fs';
 import asyncHandler from 'express-async-handler';
 import cloudinary from '../utils/cloudinary';
 import multer from 'multer';
-import { PrismaClient } from '@prisma/client';
 
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
 const multerStorage = multer.diskStorage({
   destination: function (req, file, cb) {

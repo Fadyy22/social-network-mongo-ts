@@ -1,9 +1,7 @@
 import asyncHandler from 'express-async-handler';
-import { PrismaClient } from '@prisma/client';
 
 import createToken from '../utils/createToken';
-
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
 export const signup = asyncHandler(async (req, res) => {
   const user = await prisma.user.create({
