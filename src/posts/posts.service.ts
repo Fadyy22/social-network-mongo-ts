@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 
+import { ForbiddenException, NotFoundException } from '../exceptions';
 import prisma from '../prisma';
 
 export const createPost = asyncHandler(async (req, res) => {
@@ -8,18 +9,18 @@ export const createPost = asyncHandler(async (req, res) => {
     data: req.body,
   });
 
-  res.status(201).json({ post });
+  res.status(201).json({ status: 'success', data: { post } });
 });
 
 export const getAllPosts = asyncHandler(async (req, res) => {
-  const posts: Record<string, any>[] = await prisma.post.findMany({
+  const posts: Record<string, any> = await prisma.post.findMany({
     include: {
       author: {
         select: {
           id: true,
-          profile_img: true,
           firstName: true,
           lastName: true,
+          profile_img: true,
         },
       },
       likes: {
@@ -33,14 +34,14 @@ export const getAllPosts = asyncHandler(async (req, res) => {
     },
   });
 
-  posts.forEach((post) => {
+  posts.forEach((post: Record<string, any>) => {
     post.isLiked = post.likes.some(
       (like: { userId: string }) => like.userId === req.user!.id
     );
     delete post.likes;
   });
 
-  res.status(200).json({ posts });
+  res.status(200).json({ status: 'success', data: { posts } });
 });
 
 export const getPost = asyncHandler(async (req, res) => {
@@ -83,17 +84,25 @@ export const getPost = asyncHandler(async (req, res) => {
     },
   });
 
-  if (post) {
-    post.isLiked = post.likes.some(
-      (like: { userId: string }) => like.userId === req.user!.id
-    );
-    delete post.likes;
+  if (!post) {
+    throw new NotFoundException('Post not found');
   }
 
-  res.status(200).json({ post });
+  post.isLiked = post.likes.some(
+    (like: { userId: string }) => like.userId === req.user!.id
+  );
+  delete post.likes;
+
+  res.status(200).json({ status: 'success', data: { post } });
 });
 
 export const updatePost = asyncHandler(async (req, res) => {
+  const postExists = await prisma.post.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (!postExists) throw new NotFoundException('Post not found');
+
   const post: Record<string, any> = await prisma.post.update({
     where: {
       id: req.params.id,
@@ -111,12 +120,17 @@ export const updatePost = asyncHandler(async (req, res) => {
     },
   });
 
-  delete post.authorId;
-
-  res.status(200).json({ post });
+  res.status(200).json({ status: 'success', data: { post } });
 });
 
 export const deletePost = asyncHandler(async (req, res) => {
+  const post = await prisma.post.findUnique({
+    where: { id: req.params.id },
+  });
+  if (!post) throw new NotFoundException('Post not found');
+
+  if (post.authorId !== req.user!.id) throw new ForbiddenException();
+
   await prisma.post.delete({
     where: {
       id: req.params.id,
