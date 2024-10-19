@@ -1,13 +1,7 @@
-import { compare, hashSync } from 'bcryptjs';
+import { hash } from 'bcryptjs';
 import { check, checkExact } from 'express-validator';
-import { PrismaClient } from '@prisma/client';
 
-import {
-  customValidatorMiddleware,
-  globalValidatorMiddleware,
-} from '../middlewares/validator.middleware';
-
-const prisma = new PrismaClient();
+import { globalValidatorMiddleware } from '../middlewares/validator.middleware';
 
 export const signupValidator = [
   check('firstName')
@@ -31,23 +25,7 @@ export const signupValidator = [
     .notEmpty()
     .withMessage('Email is required')
     .isEmail()
-    .withMessage('Email is not valid')
-    .bail()
-    .custom(async (email: string, { req }) => {
-      const user = await prisma.user.findUnique({
-        where: {
-          email,
-        },
-      });
-
-      if (user) {
-        return (req.customError = {
-          message: 'Email is already taken',
-          statusCode: 409,
-        });
-      }
-    }),
-  customValidatorMiddleware,
+    .withMessage('Email is not valid'),
   check('password')
     .trim()
     .isStrongPassword({
@@ -60,7 +38,7 @@ export const signupValidator = [
     .withMessage(
       'Password must have a minimum length of 8 characters, with at least one lowercase letter, one uppercase letter, one number, and one special character'
     )
-    .customSanitizer((password: string) => hashSync(password, 12)),
+    .customSanitizer(async (password: string) => await hash(password, 12)),
   checkExact([], { message: 'Unknown fileds' }),
   globalValidatorMiddleware,
 ];
@@ -72,27 +50,6 @@ export const loginValidator = [
     .withMessage('Email is required')
     .isEmail()
     .withMessage('Email is not valid'),
-  check('password')
-    .trim()
-    .notEmpty()
-    .withMessage('Password is required')
-    .bail()
-    .custom(async (password: string, { req }) => {
-      const user = await prisma.user.findUnique({
-        where: {
-          email: req.body.email,
-        },
-      });
-
-      if (!user || !(await compare(password, user.password))) {
-        return (req.customError = {
-          message: 'Invalid email or password',
-          statusCode: 401,
-        });
-      }
-
-      req.user = user;
-    }),
-  customValidatorMiddleware,
+  check('password').trim().notEmpty().withMessage('Password is required'),
   globalValidatorMiddleware,
 ];
