@@ -1,10 +1,9 @@
 import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
 
 import { UnauthorizedException } from '../exceptions';
 
-const prisma = new PrismaClient();
+import prisma from '../prisma';
 
 const isAuth = asyncHandler(async (req, res, next) => {
   let decodedToken;
@@ -33,16 +32,16 @@ const isAuth = asyncHandler(async (req, res, next) => {
     },
   });
 
-  if (user) {
-    req.user = user;
-    next();
-  } else {
-    next(
+  if (!user) {
+    return next(
       new UnauthorizedException(
         'The user who belongs to this token does no longer exist'
       )
     );
   }
+
+  req.user = user;
+  next();
 });
 
 export default isAuth;
