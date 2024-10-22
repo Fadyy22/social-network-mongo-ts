@@ -1,8 +1,14 @@
 import asyncHandler from 'express-async-handler';
 
+import { ForbiddenException, NotFoundException } from '../exceptions';
 import prisma from '../prisma';
 
 export const createComment = asyncHandler(async (req, res) => {
+  const post = await prisma.post.findUnique({
+    where: { id: req.params.postId },
+  });
+  if (!post) throw new NotFoundException('Post not found');
+
   const comment = await prisma.comment.create({
     data: {
       userId: req.user!.id,
@@ -22,10 +28,23 @@ export const createComment = asyncHandler(async (req, res) => {
     },
   });
 
-  res.status(201).json({ comment });
+  res.status(201).json({ status: 'success', data: { comment } });
 });
 
 export const deleteComment = asyncHandler(async (req, res) => {
+  const post = await prisma.post.findUnique({
+    where: { id: req.params.postId },
+  });
+  if (!post) throw new NotFoundException('Post not found');
+
+  const comment = await prisma.comment.findUnique({
+    where: { id: req.params.id },
+  });
+
+  if (!comment) throw new NotFoundException('Comment not found');
+
+  if (comment.userId !== req.user!.id) throw new ForbiddenException();
+
   await prisma.comment.delete({
     where: {
       id: req.params.id,
