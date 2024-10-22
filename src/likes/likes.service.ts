@@ -1,8 +1,15 @@
 import asyncHandler from 'express-async-handler';
 
+import { NotFoundException } from '../exceptions';
 import prisma from '../prisma';
 
 export const likePost = asyncHandler(async (req, res) => {
+  const post = await prisma.post.findUnique({
+    where: { id: req.params.id },
+    select: { id: true },
+  });
+  if (!post) throw new NotFoundException('Post not found');
+
   await prisma.like.create({
     data: {
       userId: req.user!.id,
@@ -21,10 +28,16 @@ export const likePost = asyncHandler(async (req, res) => {
     },
   });
 
-  res.status(201).json({ message: 'Post liked' });
+  res.status(201).json({ status: 'success' });
 });
 
 export const unlikePost = asyncHandler(async (req, res) => {
+  const post = await prisma.post.findUnique({
+    where: { id: req.params.id },
+    select: { id: true },
+  });
+  if (!post) throw new NotFoundException('Post not found');
+
   await prisma.like.delete({
     where: {
       postId_userId: {
