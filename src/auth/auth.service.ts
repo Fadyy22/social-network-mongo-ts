@@ -8,11 +8,10 @@ import prisma from '../prisma';
 export const signup = asyncHandler(async (req, res, next) => {
   const existingUser = await prisma.user.findUnique({
     where: { email: req.body.email },
+    select: { id: true },
   });
 
-  if (existingUser) {
-    throw new ConflictException('Email already exists');
-  }
+  if (existingUser) throw new ConflictException('Email already exists');
 
   const user = await prisma.user.create({
     data: req.body,
@@ -27,9 +26,8 @@ export const login = asyncHandler(async (req, res, next) => {
     where: { email: req.body.email },
   });
 
-  if (!user || !(await compare(req.body.password, user.password))) {
+  if (!user || !(await compare(req.body.password, user.password)))
     throw new UnauthorizedException('Invalid email or password');
-  }
 
   const token = createToken(user.id);
   res.status(200).json({ status: 'success', data: { user, token } });

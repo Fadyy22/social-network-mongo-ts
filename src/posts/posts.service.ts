@@ -84,9 +84,7 @@ export const getPost = asyncHandler(async (req, res) => {
     },
   });
 
-  if (!post) {
-    throw new NotFoundException('Post not found');
-  }
+  if (!post) throw new NotFoundException('Post not found');
 
   post.isLiked = post.likes.some(
     (like: { userId: string }) => like.userId === req.user!.id
@@ -99,6 +97,7 @@ export const getPost = asyncHandler(async (req, res) => {
 export const updatePost = asyncHandler(async (req, res) => {
   const postExists = await prisma.post.findUnique({
     where: { id: req.params.id },
+    select: { id: true },
   });
 
   if (!postExists) throw new NotFoundException('Post not found');
@@ -126,6 +125,7 @@ export const updatePost = asyncHandler(async (req, res) => {
 export const deletePost = asyncHandler(async (req, res) => {
   const post = await prisma.post.findUnique({
     where: { id: req.params.id },
+    select: { authorId: true },
   });
   if (!post) throw new NotFoundException('Post not found');
 

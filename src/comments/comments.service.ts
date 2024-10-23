@@ -6,6 +6,7 @@ import prisma from '../prisma';
 export const createComment = asyncHandler(async (req, res) => {
   const post = await prisma.post.findUnique({
     where: { id: req.params.postId },
+    select: { id: true },
   });
   if (!post) throw new NotFoundException('Post not found');
 
@@ -34,11 +35,13 @@ export const createComment = asyncHandler(async (req, res) => {
 export const deleteComment = asyncHandler(async (req, res) => {
   const post = await prisma.post.findUnique({
     where: { id: req.params.postId },
+    select: { id: true },
   });
   if (!post) throw new NotFoundException('Post not found');
 
   const comment = await prisma.comment.findUnique({
     where: { id: req.params.id },
+    select: { userId: true },
   });
 
   if (!comment) throw new NotFoundException('Comment not found');
