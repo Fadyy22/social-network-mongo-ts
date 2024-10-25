@@ -1,5 +1,7 @@
 # Social Network API
 
+## This is the MongoDB version of the Social Network API. The PostgreSQL version can be found [here](https://github.com/Fadyy22/social-network-ts)
+
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
@@ -28,8 +30,6 @@
      - [Delete Comment](#delete-comment)
 
 ## Getting Started
-
-## This is the MongoDB version of the Social Network API. The PostgreSQL version can be found [here](https://github.com/Fadyy22/social-network-ts)
 
 ### Prerequisites
 
