@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import { hash } from 'bcryptjs';
 
 const userSchema = new Schema(
   {
@@ -12,6 +13,13 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  this.password = await hash(this.password, 12);
+  next();
+});
 
 const User = model('User', userSchema);
 
