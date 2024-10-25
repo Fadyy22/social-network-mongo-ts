@@ -37,8 +37,7 @@ export const signupValidator = [
     })
     .withMessage(
       'Password must have a minimum length of 8 characters, with at least one lowercase letter, one uppercase letter, one number, and one special character'
-    )
-    .customSanitizer(async (password: string) => await hash(password, 12)),
+    ),
   checkExact([], { message: 'Unknown fileds' }),
   globalValidatorMiddleware,
 ];
