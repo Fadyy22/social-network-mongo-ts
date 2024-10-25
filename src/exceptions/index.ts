@@ -3,6 +3,7 @@ import BadRequestException from './BadRequestException';
 import UnauthorizedException from './UnauthorizedException';
 import ForbiddenException from './ForbiddenException';
 import ConflictException from './ConflictException';
+import MethodNotAllowedException from './MethodNotAllowedException';
 
 export {
   NotFoundException,
@@ -10,4 +11,5 @@ export {
   UnauthorizedException,
   ForbiddenException,
   ConflictException,
+  MethodNotAllowedException,
 };
