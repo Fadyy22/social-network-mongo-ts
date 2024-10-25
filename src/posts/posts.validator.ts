@@ -11,7 +11,7 @@ export const createPostValidator = [
 ];
 
 export const updatePostValidator = [
-  check('id').isUUID().withMessage('Invalid id'),
+  check('id').isMongoId().withMessage('Invalid ID'),
   check('content')
     .isLength({ min: 1, max: 500 })
     .withMessage('Content must be between 1 and 500 characters'),
@@ -20,6 +20,6 @@ export const updatePostValidator = [
 ];
 
 export const deletePostValidator = [
-  check('id').isUUID().withMessage('Invalid id'),
+  check('id').isMongoId().withMessage('Invalid ID'),
   globalValidatorMiddleware,
 ];
