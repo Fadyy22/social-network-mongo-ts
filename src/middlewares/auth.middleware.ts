@@ -2,8 +2,7 @@ import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 
 import { UnauthorizedException } from '../exceptions';
-
-import prisma from '../prisma';
+import User from '../users/user.model';
 
 const isAuth = asyncHandler(async (req, res, next) => {
   let decodedToken;
@@ -26,11 +25,7 @@ const isAuth = asyncHandler(async (req, res, next) => {
     return next(new UnauthorizedException('Invalid token'));
   }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: decodedToken.userId,
-    },
-  });
+  const user = await User.findById(decodedToken.userId);
 
   if (!user) {
     return next(
