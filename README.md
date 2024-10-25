@@ -29,17 +29,21 @@
 
 ## Getting Started
 
+## This is the MongoDB version of the Social Network API. The PostgreSQL version can be found [here](https://github.com/Fadyy22/social-network-ts)
+
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/)
 
 ### Installation
 
+#### Without Docker
+
 1. Clone the repo
-   `git clone https://github.com/Fadyy22/alx-career-craft.git`
+   `git clone https://github.com/Fadyy22/social-network-ts.git`
 
 2. Navigate to the project directory
-   `cd alx-career-craft`
+   `cd social-network-ts`
 
 3. Install dependencies
    `npm install`
@@ -48,6 +52,19 @@
 
 5. Start the server
    `npm start`
+
+#### With Docker
+
+1. Clone the repo
+   `git clone https://github.com/Fadyy22/social-network-ts.git`
+
+2. Navigate to the project directory
+   `cd social-network-ts`
+
+3. Create a `.env` file in the root directory and add your environment variables like .env.example
+
+4. Build the Docker image using docker-compose
+   `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d`
 
 ## API Endpoints
 
@@ -59,19 +76,21 @@
 - **Method:** `POST`
 - **Request Body:**
 
-```json
- {
-     "firstName": String,
-     "lastName": String,
-     "email": String,
-     "password": String
- }
-```
+  ```json
+  {
+      "firstName": String,
+      "lastName": String,
+      "email": String,
+      "password": String
+  }
+  ```
 
 - **Response:**
 
   ```json
     {
+      "status": "success",
+      "data" : {
         "user": {
             "id": String,
             "firstName": String,
@@ -82,6 +101,7 @@
             "createdAt": String (Date)
         },
         "token": String
+      }
     }
   ```
 
@@ -104,6 +124,8 @@
 
   ```json
     {
+      "status": "success",
+      "data" : {
         "user": {
             "id": String,
             "firstName": String,
@@ -114,6 +136,7 @@
             "createdAt": String (Date)
         },
         "token": String
+      }
     }
   ```
 
@@ -231,6 +254,8 @@
 
   ```json
     {
+      "status": "success",
+      "data": {
         "post": {
             "id": String,
             "content": String,
@@ -239,6 +264,7 @@
             "commentsCount": Integer,
             "createdAt": String (Date)
         }
+      }
     }
   ```
 
@@ -254,6 +280,8 @@
 
   ```json
     {
+      "status": "success",
+      "data": {
         "posts": [
             {
                 "id": String,
@@ -271,6 +299,7 @@
                 "isLiked": Boolean
             }
         ]
+      }
     }
   ```
 
@@ -286,6 +315,8 @@
 
   ```json
     {
+      "status": "success",
+      "data": {
         "post": {
             "id": String,
             "content": String,
@@ -314,6 +345,7 @@
             ],
             "isLiked": Boolean
         }
+      }
     }
   ```
 
@@ -337,6 +369,8 @@
 
   ```json
     {
+      "status": "success",
+      "data": {
         "post": {
             "id": String,
             "content": String,
@@ -351,6 +385,7 @@
                 "profile_img": null or String
             },
         }
+      }
     }
   ```
 
@@ -380,7 +415,7 @@
 
   ```json
   {
-    "message": "Post liked"
+    "status": "success"
   }
   ```
 
@@ -418,6 +453,8 @@
 
   ```json
     {
+      "status": "success",
+      "data": {
         "comment": {
             "id": String,
             "userId": String,
@@ -425,6 +462,7 @@
             "content": String,
             "createdAt": String (Date)
         }
+      }
     }
   ```
 
