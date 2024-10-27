@@ -15,7 +15,7 @@ import {
 } from './posts.validator';
 
 import commentRouter from '../comments/comments.route';
-// import likeRouter from '../likes/likes.route';
+import likeRouter from '../likes/likes.route';
 
 import isAuth from '../middlewares/auth.middleware';
 import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
@@ -35,8 +35,8 @@ router
   .patch(isAuth, updatePostValidator, updatePost)
   .delete(isAuth, deletePostValidator, deletePost);
 
-// router.post('/:id/like', isAuth, ...likeRouter.like);
-// router.delete('/:id/unlike', isAuth, ...likeRouter.unlike);
+router.post('/:id/like', isAuth, ...likeRouter.like);
+router.delete('/:id/unlike', isAuth, ...likeRouter.unlike);
 
 router.all('*', methodNotAllowed);
 
