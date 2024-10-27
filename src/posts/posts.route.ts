@@ -14,7 +14,7 @@ import {
   deletePostValidator,
 } from './posts.validator';
 
-// import commentRouter from '../comments/comments.route';
+import commentRouter from '../comments/comments.route';
 // import likeRouter from '../likes/likes.route';
 
 import isAuth from '../middlewares/auth.middleware';
@@ -22,7 +22,7 @@ import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
 
 const router = Router();
 
-// router.use('/:postId/comments', commentRouter);
+router.use('/:postId/comments', commentRouter);
 
 router
   .route('/')

@@ -1,69 +1,43 @@
 import asyncHandler from 'express-async-handler';
 
 import { ForbiddenException, NotFoundException } from '../exceptions';
-import prisma from '../prisma';
+import Post from '../posts/post.model';
+import Comment from './comment.model';
 
 export const createComment = asyncHandler(async (req, res) => {
-  const post = await prisma.post.findUnique({
-    where: { id: req.params.postId },
-    select: { id: true },
-  });
+  const post = await Post.findById(req.params.postId).select(
+    '_id commentsCount'
+  );
   if (!post) throw new NotFoundException('Post not found');
 
-  const comment = await prisma.comment.create({
-    data: {
-      userId: req.user!.id,
-      postId: req.params.postId,
-      content: req.body.content,
-    },
+  const comment = await Comment.create({
+    userId: req.user!._id,
+    postId: req.params.postId,
+    content: req.body.content,
   });
 
-  await prisma.post.update({
-    where: {
-      id: req.params.postId,
-    },
-    data: {
-      commentsCount: {
-        increment: 1,
-      },
-    },
-  });
+  post.commentsCount++;
+  await post.save();
 
   res.status(201).json({ status: 'success', data: { comment } });
 });
 
 export const deleteComment = asyncHandler(async (req, res) => {
-  const post = await prisma.post.findUnique({
-    where: { id: req.params.postId },
-    select: { id: true },
-  });
+  const post = await Post.findById(req.params.postId).select(
+    '_id commentsCount'
+  );
   if (!post) throw new NotFoundException('Post not found');
 
-  const comment = await prisma.comment.findUnique({
-    where: { id: req.params.id },
-    select: { userId: true },
-  });
-
+  const comment = await Comment.findById(req.params.id).select('userId');
   if (!comment) throw new NotFoundException('Comment not found');
 
-  if (comment.userId !== req.user!.id) throw new ForbiddenException();
+  if (comment.userId.toString() !== req.user!.id.toString())
+    throw new ForbiddenException();
 
-  await prisma.comment.delete({
-    where: {
-      id: req.params.id,
-    },
-  });
+  await Comment.findByIdAndDelete(req.params.id);
 
-  await prisma.post.update({
-    where: {
-      id: req.params.postId,
-    },
-    data: {
-      commentsCount: {
-        decrement: 1,
-      },
-    },
-  });
+  post.commentsCount--;
+  await post.save();
 
   res.status(204).end();
 });
