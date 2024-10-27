@@ -12,8 +12,18 @@ const postSchema = new Schema(
     commentsCount: { type: Number, default: 0 },
     media: [{ type: String }],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
+
+postSchema.virtual('comments', {
+  ref: 'Comment',
+  localField: '_id',
+  foreignField: 'postId',
+});
 
 const Post = model('Post', postSchema);
 
