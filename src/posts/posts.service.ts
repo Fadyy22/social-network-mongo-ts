@@ -44,10 +44,14 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 });
 
 export const getPost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id).populate(
-    'author',
-    '_id firstName lastName profileImg'
-  );
+  let post = await Post.findById(req.params.id)
+    .populate('author', '_id firstName lastName profileImg')
+    .populate({
+      path: 'comments',
+
+      // path: 'user' below is the virtual in Comment Schema
+      populate: { path: 'user', select: '-_id firstName lastName profileImg' },
+    });
 
   // const post: Record<string, any> | null = await prisma.post.findUnique({
   //   where: {
