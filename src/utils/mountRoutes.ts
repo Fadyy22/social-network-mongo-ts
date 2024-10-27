@@ -7,7 +7,7 @@ import userRouter from '../users/users.route';
 const mountRoutes = (app: Express) => {
   app.use('/auth', authRouter);
   app.use('/posts', postRouter);
-  app.use('/users', userRouter);
+  // app.use('/users', userRouter);
 };
 
 export default mountRoutes;
