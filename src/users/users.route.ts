@@ -1,9 +1,8 @@
 import { Router } from 'express';
 
 import {
-  parseProfileImage,
   createProfileImage,
-  getUserProfile,
+  getMyProfile,
   addFriend,
   acceptFriendRequest,
 } from './users.service';
@@ -13,13 +12,21 @@ import {
   acceptFriendRequestValidator,
 } from './users.validator';
 
+import { uploadSingleImage } from '../middlewares/uploadImage.middleware';
+
 import isAuth from '../middlewares/auth.middleware';
+import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
 
 const router = Router();
 
-router.patch('/profile-img', isAuth, parseProfileImage, createProfileImage);
+router.patch(
+  '/profile-img',
+  isAuth,
+  uploadSingleImage('profileImg', 'profile_images'),
+  createProfileImage
+);
 
-router.route('/:id').get(isAuth, getUserProfile);
+router.route('/me').get(isAuth, getMyProfile);
 
 router.post('/:id/add', isAuth, addFriendValidator, addFriend);
 router.post(
@@ -28,5 +35,7 @@ router.post(
   acceptFriendRequestValidator,
   acceptFriendRequest
 );
+
+router.all('*', methodNotAllowed);
 
 export default router;

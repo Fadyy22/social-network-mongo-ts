@@ -1,138 +1,76 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 
 import asyncHandler from 'express-async-handler';
 import cloudinary from '../utils/cloudinary';
-import multer from 'multer';
 
-import prisma from '../prisma';
+import {
+  BadRequestException,
+  NotFoundException,
+  HttpException,
+} from '../exceptions';
+import User from './user.model';
 
-const multerStorage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'uploads/profile_images');
-  },
-  filename: function (req, file, cb) {
-    const ext = file.mimetype.split('/')[1];
-    const fileName = `profile-${req.user!.id}-${Date.now()}.${ext}`;
-    cb(null, fileName);
-  },
-});
-
-const uploadProfileImage = async (image: Record<string, any>) => {
-  try {
-    const { secure_url } = await cloudinary.uploader.upload(image.path);
-    fs.unlinkSync(image.path);
-    return secure_url;
-  } catch (error) {
-    fs.unlinkSync(image.path);
-    throw error;
-  }
+const uploadProfileImage = async (image: Express.Multer.File) => {
+  const { secure_url } = await cloudinary.uploader.upload(image.path);
+  fs.unlink(image.path).catch((err) => console.log(err));
+  return secure_url;
 };
-
-export const parseProfileImage = multer({ storage: multerStorage }).single(
-  'profile_img'
-);
 
 export const createProfileImage = asyncHandler(async (req, res) => {
   if (!req.file) {
-    res.status(400).json({ message: 'Please upload an image' });
-  } else {
-    try {
-      const image = await uploadProfileImage(req.file);
-      const user = await prisma.user.update({
-        where: {
-          id: req.user!.id,
-        },
-        data: {
-          profile_img: image,
-        },
-      });
-
-      res.status(200).json({ user });
-    } catch (error) {
-      res.status(500).json({ message: 'Error uploading image' });
-    }
+    throw new BadRequestException('Please upload an image');
   }
+
+  let imageUrl;
+  try {
+    imageUrl = await uploadProfileImage(req.file);
+  } catch (error) {
+    throw new HttpException('Error uploading image', 500);
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user!._id,
+    {
+      profileImg: imageUrl,
+    },
+    { new: true }
+  );
+
+  res.status(200).json({ status: 'success', data: { user } });
 });
 
-export const getUserProfile = asyncHandler(async (req, res) => {
-  const user: Record<string, any> | null = await prisma.user.findUnique({
-    where: {
-      id: req.params.id,
-    },
-    select: {
-      id: true,
-      firstName: true,
-      lastName: true,
-      profile_img: true,
-      posts: true,
-      friends: {
-        select: {
-          id: true,
-        },
-      },
-      friendRequestsOf: {
-        select: {
-          id: true,
-        },
-      },
-    },
-  });
+export const getMyProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.user!.id)
+    .select('-password -sentRequests -friendRequests')
+    .populate({ path: 'posts', options: { sort: { createdAt: -1 } } });
 
-  if (user) {
-    user.isFriend = user.friends.some(
-      (friend: { id: string }) => friend.id === req.user!.id
-    );
-    user.isRequested = user.friendRequestsOf.some(
-      (request: { id: string }) => request.id === req.user!.id
-    );
-
-    delete user.friends;
-    delete user.friendRequestsOf;
-  }
-
-  res.status(200).json({ user });
+  res.status(200).json({ status: 'success', data: { user } });
 });
 
 export const addFriend = asyncHandler(async (req, res) => {
-  await prisma.user.update({
-    where: {
-      id: req.user!.id,
-    },
-    data: {
-      friendRequests: {
-        connect: {
-          id: req.params.id,
-        },
-      },
-    },
+  const friend = await User.findByIdAndUpdate(req.params.id, {
+    $push: { friendRequests: req.user!._id },
+  });
+  if (!friend) throw new NotFoundException('User not found');
+
+  await User.findByIdAndUpdate(req.user!.id, {
+    $push: { sentRequests: friend._id },
   });
 
-  res.status(201).json({ message: 'Request sent' });
+  res.status(201).json({ message: 'success' });
 });
 
 export const acceptFriendRequest = asyncHandler(async (req, res) => {
-  await prisma.user.update({
-    where: {
-      id: req.user!.id,
-    },
-    data: {
-      friendRequestsOf: {
-        disconnect: {
-          id: req.params.id,
-        },
-      },
-      friends: {
-        connect: {
-          id: req.params.id,
-        },
-      },
-      friendOf: {
-        connect: {
-          id: req.params.id,
-        },
-      },
-    },
+  const friend = await User.findByIdAndUpdate(req.params.id, {
+    $pull: { sentRequests: req.user!._id },
+    $push: { friends: req.user!._id },
+  });
+  if (!friend) throw new NotFoundException('User not found');
+
+  await User.findByIdAndUpdate(req.user!.id, {
+    $pull: { friendRequests: friend._id },
+    $push: { friends: friend._id },
   });
 
-  res.status(201).json({ message: 'Friend added' });
+  res.status(201).json({ message: 'success' });
 });

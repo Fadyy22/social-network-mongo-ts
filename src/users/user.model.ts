@@ -9,9 +9,11 @@ const userSchema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     friends: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    // friendRequests are requests sent to me
     friendRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    sentRequests: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
-  { timestamps: true }
+  { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } }
 );
 
 userSchema.pre('save', async function (next) {
@@ -19,6 +21,12 @@ userSchema.pre('save', async function (next) {
 
   this.password = await hash(this.password, 12);
   next();
+});
+
+userSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'author',
 });
 
 const User = model('User', userSchema);
