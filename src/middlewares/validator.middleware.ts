@@ -11,12 +11,3 @@ export const globalValidatorMiddleware: RequestHandler = (req, res, next) => {
   }
   next();
 };
-
-export const customValidatorMiddleware: RequestHandler = (req, res, next) => {
-  if (req.customError) {
-    return res
-      .status(req.customError.statusCode)
-      .json({ message: req.customError.message });
-  }
-  next();
-};
