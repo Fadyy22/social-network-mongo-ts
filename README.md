@@ -37,34 +37,22 @@
 
 ### Installation
 
-#### Without Docker
-
 1. Clone the repo
-   `git clone https://github.com/Fadyy22/social-network-ts.git`
+   `git clone https://github.com/Fadyy22/social-network-mongo-ts`
 
 2. Navigate to the project directory
-   `cd social-network-ts`
+   `cd social-network-mongo-ts`
 
 3. Install dependencies
    `npm install`
 
 4. Create a `.env` file in the root directory and add your environment variables like .env.example
 
-5. Start the server
+5. Build the project
+   `npm run build`
+
+6. Start the server
    `npm start`
-
-#### With Docker
-
-1. Clone the repo
-   `git clone https://github.com/Fadyy22/social-network-ts.git`
-
-2. Navigate to the project directory
-   `cd social-network-ts`
-
-3. Create a `.env` file in the root directory and add your environment variables like .env.example
-
-4. Build the Docker image using docker-compose
-   `docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build -d`
 
 ## API Endpoints
 
@@ -92,7 +80,7 @@
       "status": "success",
       "data" : {
         "user": {
-            "id": String,
+            "_id": String,
             "firstName": String,
             "lastName": String,
             "profile_img": null or String,
