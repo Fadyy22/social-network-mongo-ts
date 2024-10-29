@@ -44,7 +44,7 @@ export const getAllPosts = asyncHandler(async (req, res) => {
 });
 
 export const getPost = asyncHandler(async (req, res) => {
-  let post = await Post.findById(req.params.id)
+  const post = await Post.findById(req.params.id)
     .populate('author', '_id firstName lastName profileImg')
     .populate({
       path: 'comments',
@@ -52,45 +52,6 @@ export const getPost = asyncHandler(async (req, res) => {
       // path: 'user' below is the virtual in Comment Schema
       populate: { path: 'user', select: '-_id firstName lastName profileImg' },
     });
-
-  // const post: Record<string, any> | null = await prisma.post.findUnique({
-  //   where: {
-  //     id: req.params.id,
-  //   },
-  //   include: {
-  //     author: {
-  //       select: {
-  //         id: true,
-  //         firstName: true,
-  //         lastName: true,
-  //         profile_img: true,
-  //       },
-  //     },
-  //     comments: {
-  //       select: {
-  //         id: true,
-  //         user: {
-  //           select: {
-  //             id: true,
-  //             firstName: true,
-  //             lastName: true,
-  //             profile_img: true,
-  //           },
-  //         },
-  //         content: true,
-  //         createdAt: true,
-  //       },
-  //       orderBy: {
-  //         createdAt: 'desc',
-  //       },
-  //     },
-  //     likes: {
-  //       select: {
-  //         userId: true,
-  //       },
-  //     },
-  //   },
-  // });
 
   if (!post) throw new NotFoundException('Post not found');
 
@@ -103,11 +64,10 @@ export const getPost = asyncHandler(async (req, res) => {
 });
 
 export const updatePost = asyncHandler(async (req, res) => {
-  const post = await Post.findById(req.params.id);
-  // const postExists = await prisma.post.findUnique({
-  //   where: { id: req.params.id },
-  //   select: { id: true },
-  // });
+  const post = await Post.findById(req.params.id).populate(
+    'author',
+    'id firstName lastName profileImg'
+  );
 
   if (!post) throw new NotFoundException('Post not found');
   if (post.author.toString() !== req.user!._id.toString())
@@ -115,22 +75,6 @@ export const updatePost = asyncHandler(async (req, res) => {
 
   post.content = req.body.content;
   await post.save();
-  // const post: Record<string, any> = await prisma.post.update({
-  //   where: {
-  //     id: req.params.id,
-  //   },
-  //   data: req.body,
-  //   include: {
-  //     author: {
-  //       select: {
-  //         id: true,
-  //         profile_img: true,
-  //         firstName: true,
-  //         lastName: true,
-  //       },
-  //     },
-  //   },
-  // });
 
   res.status(200).json({ status: 'success', data: { post } });
 });
