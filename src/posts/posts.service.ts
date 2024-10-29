@@ -14,26 +14,7 @@ export const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find()
     .populate('author', '_id firstName lastName profileImg')
     .sort({ createdAt: -1 });
-  // const posts: Record<string, any> = await prisma.post.findMany({
-  //   include: {
-  //     author: {
-  //       select: {
-  //         id: true,
-  //         firstName: true,
-  //         lastName: true,
-  //         profile_img: true,
-  //       },
-  //     },
-  //     likes: {
-  //       select: {
-  //         userId: true,
-  //       },
-  //     },
-  //   },
-  //   orderBy: {
-  //     createdAt: 'desc',
-  //   },
-  // });
+
   // posts.forEach((post: Record<string, any>) => {
   //   post.isLiked = post.likes.some(
   //     (like: { userId: string }) => like.userId === req.user!.id
