@@ -2,6 +2,7 @@ import asyncHandler from 'express-async-handler';
 
 import { ForbiddenException, NotFoundException } from '../exceptions';
 import Post from './post.model';
+import Like from '../likes/like.model';
 
 export const createPost = asyncHandler(async (req, res) => {
   req.body.author = req.user!.id;
@@ -12,20 +13,27 @@ export const createPost = asyncHandler(async (req, res) => {
 
 export const getAllPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find()
+    .lean()
     .populate('author', '_id firstName lastName profileImg')
     .sort({ createdAt: -1 });
 
-  // posts.forEach((post: Record<string, any>) => {
-  //   post.isLiked = post.likes.some(
-  //     (like: { userId: string }) => like.userId === req.user!.id
-  //   );
-  //   delete post.likes;
-  // });
-  res.status(200).json({ status: 'success', data: { posts } });
+  const userLikes = await Like.find({ userId: req.user!._id })
+    .select('-_id postId')
+    .lean();
+
+  const likedPostIds = userLikes.map((like) => like.postId.toString());
+
+  const postsWithLikes = posts.map((post) => ({
+    ...post,
+    isLiked: likedPostIds.includes(post._id.toString()),
+  }));
+
+  res.status(200).json({ status: 'success', data: { posts: postsWithLikes } });
 });
 
 export const getPost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id)
+    .lean()
     .populate('author', '_id firstName lastName profileImg')
     .populate({
       path: 'comments',
@@ -36,12 +44,15 @@ export const getPost = asyncHandler(async (req, res) => {
 
   if (!post) throw new NotFoundException('Post not found');
 
-  // post.isLiked = post.likes.some(
-  //   (like: { userId: string })  => like.userId === req.user!.id
-  // );
-  // delete post.likes;
+  const isLiked = await Like.findOne({
+    postId: post._id,
+    userId: req.user!._id,
+  });
 
-  res.status(200).json({ status: 'success', data: { post } });
+  res.status(200).json({
+    status: 'success',
+    data: { post: { ...post, isLiked: !!isLiked } },
+  });
 });
 
 export const updatePost = asyncHandler(async (req, res) => {
