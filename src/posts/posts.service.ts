@@ -62,7 +62,7 @@ export const updatePost = asyncHandler(async (req, res) => {
   );
 
   if (!post) throw new NotFoundException('Post not found');
-  if (post.author.toString() !== req.user!._id.toString())
+  if (post.author.id.toString() !== req.user!._id.toString())
     throw new ForbiddenException();
 
   post.content = req.body.content;
