@@ -1,4 +1,5 @@
 import cors from 'cors';
+import compression from 'compression';
 import dotenv from 'dotenv';
 import express from 'express';
 
@@ -13,6 +14,7 @@ const app = express();
 connectDB();
 
 app.use(cors());
+app.use(compression());
 app.use(express.json());
 
 mountRoutes(app);
