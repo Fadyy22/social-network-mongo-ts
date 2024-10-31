@@ -1,5 +1,8 @@
 import { model, Schema } from 'mongoose';
 
+import Comment from '../comments/comment.model';
+import Like from '../likes/like.model';
+
 const postSchema = new Schema(
   {
     content: { type: String, required: true },
@@ -23,6 +26,12 @@ postSchema.virtual('comments', {
   ref: 'Comment',
   localField: '_id',
   foreignField: 'postId',
+});
+
+postSchema.post('findOneAndDelete', async function (doc, next) {
+  await Comment.deleteMany({ postId: doc._id });
+  await Like.deleteMany({ postId: doc._id });
+  next();
 });
 
 const Post = model('Post', postSchema);
