@@ -58,7 +58,7 @@ export const getPost = asyncHandler(async (req, res) => {
 export const updatePost = asyncHandler(async (req, res) => {
   const post = await Post.findById(req.params.id).populate(
     'author',
-    'id firstName lastName profileImg'
+    'firstName lastName profileImg'
   );
 
   if (!post) throw new NotFoundException('Post not found');
