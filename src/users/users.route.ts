@@ -3,11 +3,13 @@ import { Router } from 'express';
 import {
   createProfileImage,
   getMyProfile,
+  getUserProfile,
   addFriend,
   acceptFriendRequest,
 } from './users.service';
 
 import {
+  getUserProfileValidator,
   addFriendValidator,
   acceptFriendRequestValidator,
 } from './users.validator';
@@ -27,7 +29,7 @@ router.patch(
 );
 
 router.route('/me').get(isAuth, getMyProfile);
-
+router.route('/:id').get(isAuth, getUserProfileValidator, getUserProfile);
 router.post('/:id/add', isAuth, addFriendValidator, addFriend);
 router.post(
   '/:id/accept',

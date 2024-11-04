@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 
 import asyncHandler from 'express-async-handler';
 import cloudinary from '../utils/cloudinary';
+import { Types } from 'mongoose';
 
 import {
   BadRequestException,
@@ -43,6 +44,45 @@ export const getMyProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user!.id)
     .select('-password -sentRequests -friendRequests')
     .populate({ path: 'posts', options: { sort: { createdAt: -1 } } });
+
+  res.status(200).json({ status: 'success', data: { user } });
+});
+
+export const getUserProfile = asyncHandler(async (req, res) => {
+  const user = await User.aggregate([
+    { $match: { _id: new Types.ObjectId(req.params.id) } },
+    {
+      $addFields: {
+        isFriend: {
+          $in: [req.user!._id, { $ifNull: ['$friends', []] }],
+        },
+        sentRequest: {
+          $in: [req.user!._id, { $ifNull: ['$friendRequests', []] }],
+        },
+        receivedRequest: {
+          $in: [req.user!._id, { $ifNull: ['$sentRequests', []] }],
+        },
+      },
+    },
+    {
+      $lookup: {
+        from: 'posts',
+        localField: '_id',
+        foreignField: 'author',
+        as: 'posts',
+      },
+    },
+    {
+      $project: {
+        password: 0,
+        email: 0,
+        sentRequests: 0,
+        friendRequests: 0,
+        friends: 0,
+      },
+    },
+  ]);
+  if (!user) throw new NotFoundException('User not found');
 
   res.status(200).json({ status: 'success', data: { user } });
 });
