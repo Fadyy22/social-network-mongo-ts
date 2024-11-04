@@ -12,23 +12,56 @@ export const createPost = asyncHandler(async (req, res) => {
 });
 
 export const getAllPosts = asyncHandler(async (req, res) => {
-  const posts = await Post.find()
-    .lean()
-    .populate('author', '_id firstName lastName profileImg')
-    .sort({ createdAt: -1 });
+  const myLikes = await Like.find({ userId: req.user!._id });
+  const posts = await Post.aggregate([
+    { $sort: { createdAt: -1 } },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'author',
+        foreignField: '_id',
+        as: 'author',
+        pipeline: [
+          {
+            $project: {
+              _id: 1,
+              firstName: 1,
+              lastName: 1,
+              profileImg: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        author: { $arrayElemAt: ['$author', 0] },
+        isLiked: {
+          $in: [
+            '$_id',
+            { $map: { input: myLikes, as: 'like', in: '$$like.postId' } },
+          ],
+        },
+      },
+    },
+  ]);
+  // const posts = await Post.find()
+  //   .lean()
+  //   .populate('author', '_id firstName lastName profileImg')
+  //   .sort({ createdAt: -1 });
 
-  const userLikes = await Like.find({ userId: req.user!._id })
-    .select('-_id postId')
-    .lean();
+  // const userLikes = await Like.find({ userId: req.user!._id })
+  //   .select('-_id postId')
+  //   .lean();
 
-  const likedPostIds = userLikes.map((like) => like.postId.toString());
+  // const likedPostIds = userLikes.map((like) => like.postId.toString());
 
-  const postsWithLikes = posts.map((post) => ({
-    ...post,
-    isLiked: likedPostIds.includes(post._id.toString()),
-  }));
+  // const postsWithLikes = posts.map((post) => ({
+  //   ...post,
+  //   isLiked: likedPostIds.includes(post._id.toString()),
+  // }));
 
-  res.status(200).json({ status: 'success', data: { posts: postsWithLikes } });
+  res.status(200).json({ status: 'success', data: { posts } });
 });
 
 export const getPost = asyncHandler(async (req, res) => {
