@@ -49,10 +49,7 @@
 
 4. Create a `.env` file in the root directory and add your environment variables like .env.example
 
-5. Build the project
-   `npm run build`
-
-6. Start the server
+5. Start the server
    `npm start`
 
 ## API Endpoints
