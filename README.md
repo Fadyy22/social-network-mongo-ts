@@ -13,6 +13,7 @@
      - [Login](#login)
    - [Users](#users)
      - [Uploading Profile Image](#uploading-profile-image)
+     - [Get My Profile](#get-my-profile)
      - [Get Profile](#get-profile)
      - [Add Friend](#add-friend)
      - [Accept Friend Request](#accept-friend-request)
@@ -66,31 +67,36 @@
 
   ```json
   {
-      "firstName": String,
-      "lastName": String,
-      "email": String,
-      "password": String
+    "firstName": "String",
+    "lastName": "String",
+    "email": "String",
+    "password": "String"
   }
   ```
 
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data" : {
-        "user": {
-            "_id": String,
-            "firstName": String,
-            "lastName": String,
-            "profile_img": null or String,
-            "email": String,
-            "password": String,
-            "createdAt": String (Date)
-        },
-        "token": String
-      }
+  {
+    "status": "success",
+    "data": {
+      "user": {
+        "_id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "password": "String",
+        "friends": "Array",
+        "friendRequests": "Array",
+        "sentRequests": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
+      },
+      "token": "String"
     }
+  }
   ```
 
 #### Login
@@ -102,30 +108,35 @@
 - **Request Body:**
 
   ```json
-    {
-        "email": String,
-        "password": String
-    }
+  {
+    "email": "String",
+    "password": "String"
+  }
   ```
 
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data" : {
-        "user": {
-            "id": String,
-            "firstName": String,
-            "lastName": String,
-            "profile_img": null or String,
-            "email": String,
-            "password": String,
-            "createdAt": String (Date)
-        },
-        "token": String
-      }
+  {
+    "status": "success",
+    "data": {
+      "user": {
+        "_id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "password": "String",
+        "friends": "Array",
+        "sentRequests": "Array",
+        "friendRequests": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
+      },
+      "token": "String"
     }
+  }
   ```
 
 ---
@@ -144,23 +155,76 @@
 
   ```json
     {
-        "profile_img": File
+        "profileImg": File
     }
   ```
 
 - **Response:**
 
   ```json
-    {
-        "user": {
-            "id": String,
-            "firstName": String,
-            "lastName": String,
-            "email": String,
-            "profile_img": String,
-            "createdAt": String (Date)
-        }
+  {
+    "status": "success",
+    "data": {
+      "user": {
+        "_id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "password": "String",
+        "friends": "Array",
+        "sentRequests": "Array",
+        "friendRequests": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": 0,
+        "profileImg": "String",
+        "id": "String"
+      }
     }
+  }
+  ```
+
+#### Get My Profile
+
+- **URL:** `/users/me`
+
+- **Method:** `GET`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Response:**
+
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "user": {
+        "_id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "friends": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": 0,
+        "posts": [
+          {
+            "_id": "String",
+            "content": "String",
+            "author": "String",
+            "likesCount": "Number",
+            "commentsCount": "Number",
+            "media": "Array",
+            "createdAt": "String (Date)",
+            "updatedAt": "String (Date)",
+            "__v": 0,
+            "id": "String"
+          }
+        ],
+        "id": "String"
+      }
+    }
+  }
   ```
 
 #### Get Profile
@@ -198,7 +262,7 @@
 
   ```json
   {
-    "message": "Friend request sent"
+    "message": "success"
   }
   ```
 
@@ -214,7 +278,7 @@
 
   ```json
   {
-    "message": "Friend request accepted"
+    "message": "success"
   }
   ```
 
@@ -241,19 +305,23 @@
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data": {
-        "post": {
-            "id": String,
-            "content": String,
-            "authorId": String,
-            "likesCount": Integer,
-            "commentsCount": Integer,
-            "createdAt": String (Date)
-        }
+  {
+    "status": "success",
+    "data": {
+      "post": {
+        "_id": "String",
+        "content": "String",
+        "author": "String",
+        "likesCount": "Number",
+        "commentsCount": "Number",
+        "media": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
       }
     }
+  }
   ```
 
 #### Get All Posts
@@ -267,28 +335,29 @@
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data": {
-        "posts": [
-            {
-                "id": String,
-                "content": String,
-                "authorId": String,
-                "likesCount": Integer,
-                "commentsCount": Integer,
-                "createdAt": String (Date),
-                "author": {
-                    "id": String,
-                    "firstName": String,
-                    "lastName": String,
-                    "profile_img": null or String
-                },
-                "isLiked": Boolean
-            }
-        ]
-      }
+  {
+    "status": "success",
+    "data": {
+      "posts": [
+        {
+          "_id": "String",
+          "content": "String!",
+          "author": {
+            "_id": "String",
+            "firstName": "String",
+            "lastName": "String"
+          },
+          "likesCount": "Number",
+          "commentsCount": "Number",
+          "media": "Array",
+          "createdAt": "String (Date)",
+          "updatedAt": "String (Date)",
+          "__v": "Number",
+          "isLiked": "Boolean"
+        }
+      ]
     }
+  }
   ```
 
 #### Get Post
@@ -302,39 +371,44 @@
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data": {
-        "post": {
-            "id": String,
-            "content": String,
-            "authorId": String,
-            "likesCount": Integer,
-            "commentsCount": Integer,
-            "createdAt": String (Date),
-            "author": {
-                "id": String,
-                "firstName": String,
-                "lastName": String,
-                "profile_img": null or String
-            },
-            "comments": [
-                {
-                    "id": String,
-                    "user": {
-                        "id": String,
-                        "firstName": String,
-                        "lastName": String,
-                        "profile_img": null or String
-                    },
-                    "content": String,
-                    "createdAt": String (Date),
-                }
-            ],
-            "isLiked": Boolean
-        }
+  {
+    "status": "success",
+    "data": {
+      "post": {
+        "_id": "String",
+        "content": "String",
+        "author": {
+          "_id": "String",
+          "firstName": "String",
+          "lastName": "String"
+        },
+        "likesCount": "Number",
+        "commentsCount": "Number",
+        "media": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "comments": [
+          {
+            "_id": "String",
+            "userId": "String",
+            "postId": "String",
+            "content": "String",
+            "createdAt": "String (Date)",
+            "updatedAt": "String (Date)",
+            "__v": "Number",
+            "user": [
+              {
+                "firstName": "String",
+                "lastName": "String"
+              }
+            ]
+          }
+        ],
+        "isLiked": "Boolean"
       }
     }
+  }
   ```
 
 #### Update Post
@@ -356,25 +430,28 @@
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data": {
-        "post": {
-            "id": String,
-            "content": String,
-            "authorId": String,
-            "likesCount": Integer,
-            "commentsCount": Integer,
-            "createdAt": String (Date),
-            "author": {
-                "id": String,
-                "firstName": String,
-                "lastName": String,
-                "profile_img": null or String
-            },
-        }
+  {
+    "status": "success",
+    "data": {
+      "post": {
+        "_id": "String",
+        "content": "String",
+        "author": {
+          "_id": "String",
+          "firstName": "String",
+          "lastName": "String",
+          "id": "String"
+        },
+        "likesCount": "Number",
+        "commentsCount": "Number",
+        "media": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
       }
     }
+  }
   ```
 
 #### Delete Post
@@ -440,18 +517,21 @@
 - **Response:**
 
   ```json
-    {
-      "status": "success",
-      "data": {
-        "comment": {
-            "id": String,
-            "userId": String,
-            "postId": String,
-            "content": String,
-            "createdAt": String (Date)
-        }
+  {
+    "status": "success",
+    "data": {
+      "comment": {
+        "userId": "String",
+        "postId": "String",
+        "content": "String",
+        "_id": "String",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
       }
     }
+  }
   ```
 
 #### Delete Comment
