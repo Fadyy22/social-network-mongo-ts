@@ -9,6 +9,7 @@ import {
   NotFoundException,
   HttpException,
 } from '../exceptions';
+import Like from '../likes/like.model';
 import User from './user.model';
 
 const uploadProfileImage = async (image: Express.Multer.File) => {
@@ -41,14 +42,44 @@ export const createProfileImage = asyncHandler(async (req, res) => {
 });
 
 export const getMyProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user!.id)
-    .select('-password -sentRequests -friendRequests')
-    .populate({ path: 'posts', options: { sort: { createdAt: -1 } } });
+  const myLikes = await Like.find({ userId: req.user!._id });
+  // const user = await User.findById(req.user!.id)
+  //   .select('-password -sentRequests -friendRequests')
+  //   .populate({ path: 'posts', options: { sort: { createdAt: -1 } } });
+  const user = await User.aggregate([
+    {
+      $match: { _id: new Types.ObjectId(req.user!._id) },
+    },
+    {
+      $lookup: {
+        from: 'posts',
+        localField: '_id',
+        foreignField: 'author',
+        as: 'posts',
+        pipeline: [
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $addFields: {
+              isLiked: {
+                $in: [
+                  '$_id',
+                  { $map: { input: myLikes, as: 'like', in: '$$like.postId' } },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    },
+  ]);
 
   res.status(200).json({ status: 'success', data: { user } });
 });
 
 export const getUserProfile = asyncHandler(async (req, res) => {
+  const userLikes = await Like.find({ userId: req.params._id });
   const user = await User.aggregate([
     { $match: { _id: new Types.ObjectId(req.params.id) } },
     {
@@ -70,6 +101,23 @@ export const getUserProfile = asyncHandler(async (req, res) => {
         localField: '_id',
         foreignField: 'author',
         as: 'posts',
+        pipeline: [
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $addFields: {
+              isLiked: {
+                $in: [
+                  '$_id',
+                  {
+                    $map: { input: userLikes, as: 'like', in: '$$like.postId' },
+                  },
+                ],
+              },
+            },
+          },
+        ],
       },
     },
     {
