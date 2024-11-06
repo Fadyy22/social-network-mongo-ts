@@ -162,3 +162,29 @@ export const acceptFriendRequest = asyncHandler(async (req, res) => {
 
   res.status(201).json({ message: 'success' });
 });
+
+export const rejectFriendRequest = asyncHandler(async (req, res) => {
+  const friend = await User.findByIdAndUpdate(req.params.id, {
+    $pull: { sentRequests: req.user!._id },
+  });
+  if (!friend) throw new NotFoundException('User not found');
+
+  await User.findByIdAndUpdate(req.user!.id, {
+    $pull: { friendRequests: friend._id },
+  });
+
+  res.status(201).json({ message: 'success' });
+});
+
+export const deleteFriend = asyncHandler(async (req, res) => {
+  const friend = await User.findByIdAndUpdate(req.params.id, {
+    $pull: { friends: req.user!._id },
+  });
+  if (!friend) throw new NotFoundException('User not found');
+
+  await User.findByIdAndUpdate(req.user!.id, {
+    $pull: { friends: friend._id },
+  });
+
+  res.status(201).json({ message: 'success' });
+});

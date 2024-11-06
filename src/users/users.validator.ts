@@ -16,3 +16,13 @@ export const acceptFriendRequestValidator = [
   check('id').isMongoId().withMessage('Invalid ID'),
   globalValidatorMiddleware,
 ];
+
+export const rejectFriendRequestValidator = [
+  check('id').isMongoId().withMessage('Invalid ID'),
+  globalValidatorMiddleware,
+];
+
+export const deleteFriendValidator = [
+  check('id').isMongoId().withMessage('Invalid ID'),
+  globalValidatorMiddleware,
+];

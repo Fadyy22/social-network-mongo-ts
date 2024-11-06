@@ -6,20 +6,25 @@ import {
   getUserProfile,
   addFriend,
   acceptFriendRequest,
+  rejectFriendRequest,
+  deleteFriend,
 } from './users.service';
 
 import {
   getUserProfileValidator,
   addFriendValidator,
   acceptFriendRequestValidator,
+  rejectFriendRequestValidator,
+  deleteFriendValidator,
 } from './users.validator';
 
 import { uploadSingleImage } from '../middlewares/uploadImage.middleware';
-
 import isAuth from '../middlewares/auth.middleware';
 import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
 
 const router = Router();
+
+const friendRouter = Router({ mergeParams: true });
 
 router.patch(
   '/profile-img',
@@ -29,14 +34,14 @@ router.patch(
 );
 
 router.route('/me').get(isAuth, getMyProfile);
-router.route('/:id').get(isAuth, getUserProfileValidator, getUserProfile);
-router.post('/:id/add', isAuth, addFriendValidator, addFriend);
-router.post(
-  '/:id/accept',
-  isAuth,
-  acceptFriendRequestValidator,
-  acceptFriendRequest
-);
+
+friendRouter.get('/', getUserProfileValidator, getUserProfile);
+friendRouter.post('/add', addFriendValidator, addFriend);
+friendRouter.post('/accept', acceptFriendRequestValidator, acceptFriendRequest);
+friendRouter.post('/reject', rejectFriendRequestValidator, rejectFriendRequest);
+friendRouter.post('/delete', deleteFriendValidator, deleteFriend);
+
+router.use('/:id', isAuth, friendRouter);
 
 router.all('*', methodNotAllowed);
 
