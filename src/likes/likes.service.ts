@@ -16,16 +16,13 @@ export const likePost = asyncHandler(async (req, res) => {
     postId: req.params.id,
   });
 
-  const post = await Post.findByIdAndUpdate(
+  await Post.findByIdAndUpdate(
     req.params.id,
     {
       $inc: { likesCount: 1 },
     },
     { new: true }
   );
-  if (!post) throw new NotFoundException('Post not found');
-  console.log(post);
-  console.log('inc');
 
   res.status(201).json({ status: 'success' });
 });
@@ -37,16 +34,13 @@ export const unlikePost = asyncHandler(async (req, res) => {
   });
   if (!like.deletedCount) throw new NotFoundException('Not liked yet');
 
-  const post = await Post.findByIdAndUpdate(
+  await Post.findByIdAndUpdate(
     req.params.id,
     {
       $inc: { likesCount: -1 },
     },
     { new: true }
   );
-  if (!post) throw new NotFoundException('Post not found');
-  console.log(post);
-  console.log('dec');
 
   res.status(204).end();
 });
