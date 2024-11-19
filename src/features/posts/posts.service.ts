@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
 
-import { ForbiddenException, NotFoundException } from '../exceptions';
+import { ForbiddenException, NotFoundException } from '../../common/exceptions';
 import Post from './post.model';
 import Like from '../likes/like.model';
 

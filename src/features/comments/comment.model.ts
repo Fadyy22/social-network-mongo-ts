@@ -1,4 +1,5 @@
 import { model, Schema } from 'mongoose';
+import Post from '../posts/post.model';
 
 const commentSchema = new Schema(
   {
@@ -32,6 +33,10 @@ commentSchema.virtual('user', {
   ref: 'User',
   localField: 'userId',
   foreignField: '_id',
+});
+
+commentSchema.post('findOneAndDelete', async function (doc, next) {
+  await Post.findByIdAndUpdate(doc.postId, { $inc: { commentsCount: -1 } });
 });
 
 const Comment = model('Comment', commentSchema);

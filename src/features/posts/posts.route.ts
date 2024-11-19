@@ -17,8 +17,8 @@ import {
 import commentRouter from '../comments/comments.route';
 import likeRouter from '../likes/likes.route';
 
-import isAuth from '../middlewares/auth.middleware';
-import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
+import isAuth from '../../common/middlewares/auth.middleware';
+import methodNotAllowed from '../../common/middlewares/methodNotAllowed.middleware';
 
 const router = Router();
 

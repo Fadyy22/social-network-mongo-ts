@@ -1,14 +1,14 @@
 import fs from 'fs/promises';
 
 import asyncHandler from 'express-async-handler';
-import cloudinary from '../utils/cloudinary';
+import cloudinary from '../../common/utils/cloudinary';
 import { Types } from 'mongoose';
 
 import {
   BadRequestException,
   NotFoundException,
   HttpException,
-} from '../exceptions';
+} from '../../common/exceptions';
 import Like from '../likes/like.model';
 import User from './user.model';
 

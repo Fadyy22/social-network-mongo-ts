@@ -3,7 +3,7 @@ import { Router } from 'express';
 import { signup, login } from './auth.service';
 
 import { signupValidator, loginValidator } from './auth.validator';
-import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
+import methodNotAllowed from '../../common/middlewares/methodNotAllowed.middleware';
 
 const router = Router();
 

@@ -17,6 +17,9 @@
      - [Get Profile](#get-profile)
      - [Add Friend](#add-friend)
      - [Accept Friend Request](#accept-friend-request)
+     - [Cancel Friend Request](#cancel-friend-request)
+     - [Reject Friend Request](#reject-friend-request)
+     - [Delete Friend](#delete-friend)
    - [Posts](#posts)
      - [Create Post](#create-post)
      - [Get All Posts](#get-all-posts)
@@ -28,6 +31,7 @@
      - [Unlike Post](#unlike-post)
    - [Comments](#comments)
      - [Create Comment](#create-comment)
+     - [Update Comment](#update-comment)
      - [Delete Comment](#delete-comment)
 
 ## Getting Started
@@ -267,7 +271,7 @@
 
 - **URL:** `/users/:id/accept`
 
-- **Method:** `POST`
+- **Method:** `PATCH`
 
 - **Request Headers:** `Authorization: Bearer <token>`
 
@@ -278,6 +282,36 @@
     "message": "success"
   }
   ```
+
+#### Cancel Friend Request
+
+- **URL:** `/users/:id/cancel`
+
+- **Method:** `DELETE`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Response:** 204 No Content
+
+#### Reject Friend Request
+
+- **URL:** `/users/:id/reject`
+
+- **Method:** `DELETE`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Response:** 204 No Content
+
+#### Delete Friend
+
+- **URL:** `/users/:id/delete`
+
+- **Method:** `DELETE`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Response:** 204 No Content
 
 ---
 
@@ -500,6 +534,42 @@
 - **URL:** `/posts/:id/comments`
 
 - **Method:** `POST`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Request Body:**
+
+  ```json
+    {
+        "content": String
+    }
+  ```
+
+- **Response:**
+
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "comment": {
+        "userId": "String",
+        "postId": "String",
+        "content": "String",
+        "_id": "String",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": "Number",
+        "id": "String"
+      }
+    }
+  }
+  ```
+
+#### Update Comment
+
+- **URL:** `/posts/:id/comments`
+
+- **Method:** `PATCH`
 
 - **Request Headers:** `Authorization: Bearer <token>`
 

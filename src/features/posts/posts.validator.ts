@@ -1,6 +1,6 @@
 import { check, checkExact } from 'express-validator';
 
-import { globalValidatorMiddleware } from '../middlewares/validator.middleware';
+import { globalValidatorMiddleware } from '../../common/middlewares/validator.middleware';
 
 export const createPostValidator = [
   check('content')

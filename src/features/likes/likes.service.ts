@@ -1,6 +1,6 @@
 import asyncHandler from 'express-async-handler';
 
-import { ConflictException, NotFoundException } from '../exceptions';
+import { ConflictException, NotFoundException } from '../../common/exceptions';
 import Post from '../posts/post.model';
 import Like from './like.model';
 

@@ -1,8 +1,11 @@
 import asyncHandler from 'express-async-handler';
 
 import { compare } from 'bcryptjs';
-import createToken from '../utils/createToken';
-import { ConflictException, UnauthorizedException } from '../exceptions';
+import createToken from '../../common/utils/createToken';
+import {
+  ConflictException,
+  UnauthorizedException,
+} from '../../common/exceptions';
 import User from '../users/user.model';
 
 export const signup = asyncHandler(async (req, res) => {

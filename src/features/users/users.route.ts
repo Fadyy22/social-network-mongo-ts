@@ -11,9 +11,9 @@ import { getUserProfileValidator } from './users.validator';
 
 import friendRouter from '../friends/friends.route';
 
-import { uploadSingleImage } from '../middlewares/uploadImage.middleware';
-import isAuth from '../middlewares/auth.middleware';
-import methodNotAllowed from '../middlewares/methodNotAllowed.middleware';
+import { uploadSingleImage } from '../../common/middlewares/uploadImage.middleware';
+import isAuth from '../../common/middlewares/auth.middleware';
+import methodNotAllowed from '../../common/middlewares/methodNotAllowed.middleware';
 
 const router = Router();
 

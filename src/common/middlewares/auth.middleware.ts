@@ -2,7 +2,7 @@ import asyncHandler from 'express-async-handler';
 import jwt from 'jsonwebtoken';
 
 import { UnauthorizedException } from '../exceptions';
-import User from '../users/user.model';
+import User from '../../features/users/user.model';
 
 const isAuth = asyncHandler(async (req, res, next) => {
   let decodedToken;
