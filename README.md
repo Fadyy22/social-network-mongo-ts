@@ -15,6 +15,7 @@
      - [Uploading Profile Image](#uploading-profile-image)
      - [Get My Profile](#get-my-profile)
      - [Get Profile](#get-profile)
+     - [Get Friend Requests](#get-friend-requests)
      - [Add Friend](#add-friend)
      - [Accept Friend Request](#accept-friend-request)
      - [Cancel Friend Request](#cancel-friend-request)
@@ -241,14 +242,41 @@
   ```json
     {
         "user": {
-        "id": String,
-        "firstName": String,
-        "lastName": String,
-        "email": String,
-        "profile_img": null or String,
-        "createdAt": String (Date),
+        "id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "profile_img": null or "String",
+        "createdAt": "String (Date)",
         }
     }
+  ```
+
+#### Get Friend Requests
+
+- **URL:** `/users/me/friend-requests`
+
+- **Method:** `GET`
+
+- **Request Headers:** `Authorization Bearer <token>`
+
+- **Response:**
+
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "friendRequests": [
+        {
+          "_id": "String",
+          "firstName": "String",
+          "lastName": "String",
+          "profileImg": "String",
+          "id": "String"
+        }
+      ]
+    }
+  }
   ```
 
 #### Add Friend
