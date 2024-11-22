@@ -1,9 +1,9 @@
 import { Express, Router } from 'express';
 
-import { swagger } from './swagger';
-import authRouter from '../auth/auth.route';
-import postRouter from '../posts/posts.route';
-import userRouter from '../users/users.route';
+// import { swagger } from './swagger';
+import authRouter from '../../features/auth/auth.route';
+import postRouter from '../../features/posts/posts.route';
+import userRouter from '../../features/users/users.route';
 import routeNotFoundMiddleware from '../middlewares/routeNotFound.middleware';
 
 const restRouter = Router();
@@ -16,7 +16,7 @@ restRouter.use('*', routeNotFoundMiddleware);
 
 const mountRoutes = (app: Express) => {
   app.use('/api/v1', restRouter);
-  app.use('/api-docs', ...swagger);
+  // app.use('/api-docs', ...swagger);
 };
 
 export default mountRoutes;
