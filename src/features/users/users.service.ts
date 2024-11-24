@@ -78,6 +78,14 @@ export const getMyProfile = asyncHandler(async (req, res) => {
   res.status(200).json({ status: 'success', data: { user } });
 });
 
+export const updateProfile = asyncHandler(async (req, res) => {
+  const user = await User.findByIdAndUpdate(req.user!._id, req.body, {
+    new: true,
+  });
+
+  res.status(200).json({ status: 'success', data: { user } });
+});
+
 export const getUserProfile = asyncHandler(async (req, res) => {
   const userLikes = await Like.find({ userId: req.params._id });
   const user = await User.aggregate([

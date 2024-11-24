@@ -1,4 +1,3 @@
-import { hash } from 'bcryptjs';
 import { check, checkExact } from 'express-validator';
 
 import { globalValidatorMiddleware } from '../../common/middlewares/validator.middleware';

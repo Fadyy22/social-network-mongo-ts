@@ -5,9 +5,13 @@ import {
   getFriendRequests,
   getMyProfile,
   getUserProfile,
+  updateProfile,
 } from './users.service';
 
-import { getUserProfileValidator } from './users.validator';
+import {
+  getUserProfileValidator,
+  updateProfileValidator,
+} from './users.validator';
 
 import friendRouter from '../friends/friends.route';
 
@@ -25,6 +29,7 @@ router.patch(
 );
 
 router.get('/me', isAuth, getMyProfile);
+router.patch('/me', isAuth, updateProfileValidator, updateProfile);
 router.get('/me/friend-requests', isAuth, getFriendRequests);
 
 router.get('/:id', isAuth, getUserProfileValidator, getUserProfile);
