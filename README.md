@@ -599,7 +599,7 @@
 
 #### Create Comment
 
-- **URL:** `/posts/:id/comments`
+- **URL:** `/posts/:postId/comments`
 
 - **Method:** `POST`
 
@@ -635,7 +635,7 @@
 
 #### Update Comment
 
-- **URL:** `/posts/:id/comments`
+- **URL:** `/posts/:postId/comments/:commentId`
 
 - **Method:** `PATCH`
 
