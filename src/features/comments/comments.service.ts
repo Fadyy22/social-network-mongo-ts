@@ -43,7 +43,7 @@ export const deleteComment = asyncHandler(async (req, res) => {
     .lean();
   if (!comment) throw new NotFoundException('Comment not found');
 
-  const post = await Post.findById(req.params.postId).select('userId').lean();
+  const post = await Post.findById(req.params.postId).select('author').lean();
   if (!post) throw new NotFoundException('Post not found');
 
   if (
