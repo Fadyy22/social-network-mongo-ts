@@ -14,6 +14,7 @@
    - [Users](#users)
      - [Uploading Profile Image](#uploading-profile-image)
      - [Get My Profile](#get-my-profile)
+     - [Update Profile](#update-profile)
      - [Get Profile](#get-profile)
      - [Get Friend Requests](#get-friend-requests)
      - [Add Friend](#add-friend)
@@ -223,6 +224,45 @@
             "id": "String"
           }
         ],
+        "id": "String"
+      }
+    }
+  }
+  ```
+
+#### Update Profile
+
+- **URL:** `/users/me`
+
+- **Method:** `PATCH`
+
+- **Request Headers:** `Authorization: Bearer <token>`
+
+- **Request Body:**
+
+  ```json
+  {
+    "firstName": "String",
+    "lastName": "String",
+    "bio": "String"
+  }
+  ```
+
+- **Response:**
+
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "user": {
+        "_id": "String",
+        "firstName": "String",
+        "lastName": "String",
+        "email": "String",
+        "friends": "Array",
+        "createdAt": "String (Date)",
+        "updatedAt": "String (Date)",
+        "__v": 0,
         "id": "String"
       }
     }
