@@ -1,9 +1,7 @@
-import fs from 'fs/promises';
-
 import asyncHandler from 'express-async-handler';
-import cloudinary from '../../common/utils/cloudinary';
 import { Types } from 'mongoose';
 
+import { uploadFile } from '../../common/utils/cloudinary';
 import {
   BadRequestException,
   NotFoundException,
@@ -12,12 +10,6 @@ import {
 import Like from '../likes/like.model';
 import User from './user.model';
 
-const uploadProfileImage = async (image: Express.Multer.File) => {
-  const { secure_url } = await cloudinary.uploader.upload(image.path);
-  fs.unlink(image.path).catch((err) => console.log(err));
-  return secure_url;
-};
-
 export const createProfileImage = asyncHandler(async (req, res) => {
   if (!req.file) {
     throw new BadRequestException('Please upload an image');
@@ -25,7 +17,7 @@ export const createProfileImage = asyncHandler(async (req, res) => {
 
   let imageUrl;
   try {
-    imageUrl = await uploadProfileImage(req.file);
+    imageUrl = await uploadFile(req.file);
   } catch (error) {
     throw new HttpException('Error uploading image', 500);
   }

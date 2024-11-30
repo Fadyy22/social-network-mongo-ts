@@ -15,7 +15,7 @@ import {
 
 import friendRouter from '../friends/friends.route';
 
-import { uploadSingleImage } from '../../common/middlewares/uploadImage.middleware';
+import { uploadSingleFile } from '../../common/middlewares/fileUpload.middleware';
 import isAuth from '../../common/middlewares/auth.middleware';
 import methodNotAllowed from '../../common/middlewares/methodNotAllowed.middleware';
 
@@ -24,7 +24,9 @@ const router = Router();
 router.patch(
   '/profile-img',
   isAuth,
-  uploadSingleImage('profileImg', 'profile_images'),
+  uploadSingleFile('profileImg', {
+    destination: 'profile_images',
+  }),
   createProfileImage
 );
 
