@@ -17,6 +17,7 @@ import {
 import commentRouter from '../comments/comments.route';
 import likeRouter from '../likes/likes.route';
 
+import { uploadMultipleFiles } from '../../common/middlewares/fileUpload.middleware';
 import isAuth from '../../common/middlewares/auth.middleware';
 import methodNotAllowed from '../../common/middlewares/methodNotAllowed.middleware';
 
@@ -26,7 +27,14 @@ router.use('/:postId/comments', commentRouter);
 
 router
   .route('/')
-  .post(isAuth, createPostValidator, createPost)
+  .post(
+    isAuth,
+    uploadMultipleFiles('images', 2, {
+      destination: 'posts',
+    }),
+    createPostValidator,
+    createPost
+  )
   .get(isAuth, getAllPosts);
 
 router

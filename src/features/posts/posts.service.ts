@@ -3,8 +3,19 @@ import asyncHandler from 'express-async-handler';
 import { ForbiddenException, NotFoundException } from '../../common/exceptions';
 import Post from './post.model';
 import Like from '../likes/like.model';
+import { uploadMultipleFiles } from '../../common/utils/cloudinary';
 
 export const createPost = asyncHandler(async (req, res) => {
+  if (req.files) {
+    try {
+      const media = await uploadMultipleFiles(
+        req.files as Express.Multer.File[]
+      );
+      req.body.media = media;
+    } catch (error) {
+      console.error(error);
+    }
+  }
   req.body.author = req.user!.id;
   const post = await Post.create(req.body);
 
